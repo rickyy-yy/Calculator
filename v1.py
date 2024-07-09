@@ -118,29 +118,32 @@ def add_divide():
 def parse_input():
     valid = True
     expression = input_display["text"]
-    previous_character = expression[0]
-    if previous_character in ['+', '-', 'x', '÷']:
-        input_display["text"] = "Invalid. Try again"
+    if len(expression) == 0:
+        pass
     else:
-        index = 1
-        while index < len(expression):
-            if expression[index] == "0":
-                if previous_character == '÷':
-                    input_display["text"] = "Invalid. Try again"
-                    valid = False
-            if expression[index] in ['+', '-', 'x', '÷']:
-                if previous_character in ['+', '-', 'x', '÷']:
-                    input_display["text"] = "Invalid. Try again"
-                    valid = False
-            previous_character = expression[index]
-            if index == len(expression) - 1:
+        previous_character = expression[0]
+        if previous_character in ['+', '-', 'x', '÷']:
+            input_display["text"] = "Invalid. Try again"
+        else:
+            index = 1
+            while index < len(expression):
+                if expression[index] == "0":
+                    if previous_character == '÷':
+                        input_display["text"] = "Invalid. Try again"
+                        valid = False
                 if expression[index] in ['+', '-', 'x', '÷']:
-                    input_display["text"] = "Invalid. Try again"
-                    valid = False
-            index += 1
+                    if previous_character in ['+', '-', 'x', '÷']:
+                        input_display["text"] = "Invalid. Try again"
+                        valid = False
+                previous_character = expression[index]
+                if index == len(expression) - 1:
+                    if expression[index] in ['+', '-', 'x', '÷']:
+                        input_display["text"] = "Invalid. Try again"
+                        valid = False
+                index += 1
 
-        if valid:
-            calculate(expression)
+            if valid:
+                calculate(expression)
 
 
 def calculate(expression):
@@ -154,43 +157,54 @@ def calculate(expression):
         else:
             temp += i
     processed.append(temp)
+    if len(processed) == 1:
+        result = processed[0]
+        input_display["text"] = str(result)
+    elif len(processed) == 0:
+        pass
+    else:
+        while '+' in processed or '-' in processed or 'x' in processed or '÷' in processed:
+            if 'x' in processed or '÷' in processed:
+                for i in processed:
+                    if i in ['x', '÷']:
+                        operator_index = processed.index(i)
+                        operand_index_1 = operator_index - 1
+                        operand_index_2 = operator_index + 1
 
-    while '+' in processed or '-' in processed or 'x' in processed or '÷' in processed:
-        if 'x' in processed or '÷' in processed:
-            for i in processed:
-                if i in ['x', '÷']:
-                    operator_index = processed.index(i)
-                    operand_index_1 = operator_index - 1
-                    operand_index_2 = operator_index + 1
+                        operand_2 = int(processed.pop(operand_index_2))
+                        operand_1 = int(processed.pop(operand_index_1))
+                        if i == 'x':
+                            result = operand_1 * operand_2
+                        else:
+                            result = int(operand_1 / operand_2)
+                        processed[operator_index-1] = str(result)
+            else:
+                for i in processed:
+                    if i in ['+', '-']:
+                        operator_index = processed.index(i)
+                        operand_index_1 = operator_index - 1
+                        operand_index_2 = operator_index + 1
 
-                    operand_2 = int(processed.pop(operand_index_2))
-                    operand_1 = int(processed.pop(operand_index_1))
-                    if i == 'x':
-                        result = operand_1 * operand_2
-                    else:
-                        result = int(operand_1 / operand_2)
-                    processed[operator_index-1] = str(result)
-        else:
-            for i in processed:
-                if i in ['+', '-']:
-                    operator_index = processed.index(i)
-                    operand_index_1 = operator_index - 1
-                    operand_index_2 = operator_index + 1
-
-                    operand_2 = int(processed.pop(operand_index_2))
-                    operand_1 = int(processed.pop(operand_index_1))
-                    if i == '+':
-                        result = operand_1 + operand_2
-                    else:
-                        result = operand_1 - operand_2
-                    processed[operator_index-1] = str(result)
-
-    input_display["text"] = str(result)
+                        operand_2 = int(processed.pop(operand_index_2))
+                        operand_1 = int(processed.pop(operand_index_1))
+                        if i == '+':
+                            result = operand_1 + operand_2
+                        else:
+                            result = operand_1 - operand_2
+                        processed[operator_index-1] = str(result)
 
 
+
+        input_display["text"] = str(result)
+
+
+def del_last_char():
+    expression = input_display["text"]
+    expression = expression[:-1]
+    input_display["text"] = expression
 
 current_expression = "Enter number"
-input_display = Label(main_body, text=current_expression, height=5, width=45, bg='#e1eded')
+input_display = Label(main_body, text=current_expression, height=5, width=45, bg='#E1EDED')
 input_display.grid(columnspan=4, row=0)
 
 button_1 = Button(main_body, text="1", width=10, height=5, command=add_1)
@@ -208,24 +222,24 @@ button_minus = Button(main_body, text="-", width=10, height=5, command=add_minus
 button_multiply = Button(main_body, text="x", width=10, height=5, command=add_multiply)
 button_divide = Button(main_body, text="÷", width=10, height=5, command=add_divide)
 button_equal = Button(main_body, text="=", width=10, height=5, command=parse_input)
-button_backspace = Button(main_body, text="Del", width=10, height=5)
+button_backspace = Button(main_body, text="Del", width=10, height=5, command=del_last_char)
 
-button_1.grid(row=1,column=0)
-button_2.grid(row=1,column=1)
-button_3.grid(row=1,column=2)
-button_4.grid(row=2,column=0)
-button_5.grid(row=2,column=1)
-button_6.grid(row=2,column=2)
-button_7.grid(row=3,column=0)
-button_8.grid(row=3,column=1)
-button_9.grid(row=3,column=2)
-button_0.grid(row=4,column=0)
-button_plus.grid(row=4,column=1)
-button_minus.grid(row=4,column=2)
-button_multiply.grid(row=4,column=3)
-button_divide.grid(row=3,column=3)
-button_equal.grid(row=2,column=3)
-button_backspace.grid(row=1,column=3)
+button_1.grid(row=1, column=0)
+button_2.grid(row=1, column=1)
+button_3.grid(row=1, column=2)
+button_4.grid(row=2, column=0)
+button_5.grid(row=2, column=1)
+button_6.grid(row=2, column=2)
+button_7.grid(row=3, column=0)
+button_8.grid(row=3, column=1)
+button_9.grid(row=3, column=2)
+button_0.grid(row=4, column=0)
+button_plus.grid(row=4, column=1)
+button_minus.grid(row=4, column=2)
+button_multiply.grid(row=4, column=3)
+button_divide.grid(row=3, column=3)
+button_equal.grid(row=2, column=3)
+button_backspace.grid(row=1, column=3)
 
 
 main_body.mainloop()
