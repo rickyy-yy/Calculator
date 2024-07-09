@@ -203,6 +203,7 @@ def del_last_char():
     expression = expression[:-1]
     input_display["text"] = expression
 
+
 current_expression = "Enter number"
 input_display = Label(main_body, text=current_expression, height=5, width=45, bg='#E1EDED')
 input_display.grid(columnspan=4, row=0)
@@ -241,5 +242,5 @@ button_divide.grid(row=3, column=3)
 button_equal.grid(row=2, column=3)
 button_backspace.grid(row=1, column=3)
 
-
+main_body.resizable(width=False, height=False)
 main_body.mainloop()
