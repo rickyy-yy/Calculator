@@ -5,7 +5,7 @@ main_body = Tk()  # The main window that contains buttons and input field
 
 def add_1():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "1"
     else:
         input_display["text"] = text_rn + "1"
@@ -13,7 +13,7 @@ def add_1():
 
 def add_2():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "2"
     else:
         input_display["text"] = text_rn + "2"
@@ -21,7 +21,7 @@ def add_2():
 
 def add_3():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "3"
     else:
         input_display["text"] = text_rn + "3"
@@ -29,7 +29,7 @@ def add_3():
 
 def add_4():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "4"
     else:
         input_display["text"] = text_rn + "4"
@@ -37,7 +37,7 @@ def add_4():
 
 def add_5():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "5"
     else:
         input_display["text"] = text_rn + "5"
@@ -45,7 +45,7 @@ def add_5():
 
 def add_6():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "6"
     else:
         input_display["text"] = text_rn + "6"
@@ -53,7 +53,7 @@ def add_6():
 
 def add_7():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "7"
     else:
         input_display["text"] = text_rn + "7"
@@ -61,7 +61,7 @@ def add_7():
 
 def add_8():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "8"
     else:
         input_display["text"] = text_rn + "8"
@@ -69,7 +69,7 @@ def add_8():
 
 def add_9():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "9"
     else:
         input_display["text"] = text_rn + "9"
@@ -77,7 +77,7 @@ def add_9():
 
 def add_0():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "0"
     else:
         input_display["text"] = text_rn + "0"
@@ -85,7 +85,7 @@ def add_0():
 
 def add_plus():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "+"
     else:
         input_display["text"] = text_rn + "+"
@@ -93,7 +93,7 @@ def add_plus():
 
 def add_minus():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "-"
     else:
         input_display["text"] = text_rn + "-"
@@ -101,7 +101,7 @@ def add_minus():
 
 def add_multiply():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "x"
     else:
         input_display["text"] = text_rn + "x"
@@ -109,10 +109,85 @@ def add_multiply():
 
 def add_divide():
     text_rn = input_display["text"]
-    if text_rn == "Enter number":
+    if text_rn in ["Enter number", "Invalid. Try again"]:
         input_display["text"] = "÷"
     else:
         input_display["text"] = text_rn + "÷"
+
+
+def parse_input():
+    valid = True
+    expression = input_display["text"]
+    previous_character = expression[0]
+    if previous_character in ['+', '-', 'x', '÷']:
+        input_display["text"] = "Invalid. Try again"
+    else:
+        index = 1
+        while index < len(expression):
+            if expression[index] == "0":
+                if previous_character == '÷':
+                    input_display["text"] = "Invalid. Try again"
+                    valid = False
+            if expression[index] in ['+', '-', 'x', '÷']:
+                if previous_character in ['+', '-', 'x', '÷']:
+                    input_display["text"] = "Invalid. Try again"
+                    valid = False
+            previous_character = expression[index]
+            if index == len(expression) - 1:
+                if expression[index] in ['+', '-', 'x', '÷']:
+                    input_display["text"] = "Invalid. Try again"
+                    valid = False
+            index += 1
+
+        if valid:
+            calculate(expression)
+
+
+def calculate(expression):
+    processed = []
+    temp = ""
+    for i in expression:
+        if i in ['÷', 'x', '-', '+']:
+            processed.append(temp)
+            temp = ""
+            processed.append(i)
+        else:
+            temp += i
+    processed.append(temp)
+
+    while '+' in processed or '-' in processed or 'x' in processed or '÷' in processed:
+        if 'x' in processed or '÷' in processed:
+            for i in processed:
+                if i in ['x', '÷']:
+                    operator_index = processed.index(i)
+                    operand_index_1 = operator_index - 1
+                    operand_index_2 = operator_index + 1
+
+                    operand_2 = int(processed.pop(operand_index_2))
+                    operand_1 = int(processed.pop(operand_index_1))
+                    if i == 'x':
+                        result = operand_1 * operand_2
+                    else:
+                        result = int(operand_1 / operand_2)
+                    processed[operator_index-1] = str(result)
+        else:
+            for i in processed:
+                if i in ['+', '-']:
+                    operator_index = processed.index(i)
+                    operand_index_1 = operator_index - 1
+                    operand_index_2 = operator_index + 1
+
+                    operand_2 = int(processed.pop(operand_index_2))
+                    operand_1 = int(processed.pop(operand_index_1))
+                    if i == '+':
+                        result = operand_1 + operand_2
+                    else:
+                        result = operand_1 - operand_2
+                    processed[operator_index-1] = str(result)
+
+    input_display["text"] = str(result)
+
+
 
 current_expression = "Enter number"
 input_display = Label(main_body, text=current_expression, height=5, width=45, bg='#e1eded')
@@ -132,7 +207,7 @@ button_plus = Button(main_body, text="+", width=10, height=5, command=add_plus)
 button_minus = Button(main_body, text="-", width=10, height=5, command=add_minus)
 button_multiply = Button(main_body, text="x", width=10, height=5, command=add_multiply)
 button_divide = Button(main_body, text="÷", width=10, height=5, command=add_divide)
-button_equal = Button(main_body, text="=", width=10, height=5)
+button_equal = Button(main_body, text="=", width=10, height=5, command=parse_input)
 button_backspace = Button(main_body, text="Del", width=10, height=5)
 
 button_1.grid(row=1,column=0)
